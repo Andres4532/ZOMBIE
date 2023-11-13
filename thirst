@@ -1,0 +1,65 @@
+using UnityEngine;
+
+public class Vaca2 : MonoBehaviour
+{
+    public float velocidadMovimiento = 3.0f;
+    public float tiempoEsperaEnEsquina = 1.0f;
+    public float anguloGiro = 90.0f; // Ajusta el ángulo de giro según tus necesidades
+
+    private Vector3[] waypoints;
+    private int currentWaypointIndex = 0;
+    private float tiempoUltimoMovimiento;
+
+    void Start()
+    {
+        waypoints = new Vector3[]
+        {
+            new Vector3(1.0f, 0.0f, 1.0f),
+            new Vector3(1.0f, 0.0f, -1.0f),
+            new Vector3(-1.0f, 0.0f, -1.0f),
+            new Vector3(-1.0f, 0.0f, 1.0f),
+        };
+
+        tiempoUltimoMovimiento = Time.time;
+    }
+
+    void Update()
+    {
+        MoverVaca();
+    }
+
+    void MoverVaca()
+    {
+        // Verificar si la vaca ha llegado al waypoint actual
+        if (Vector3.Distance(transform.position, waypoints[currentWaypointIndex]) < 0.1f)
+        {
+            // Esperar en la esquina antes de pasar al siguiente waypoint
+            if (Time.time - tiempoUltimoMovimiento >= tiempoEsperaEnEsquina)
+            {
+                // Invertir la dirección si ha llegado a la última esquina
+                if (currentWaypointIndex == 0)
+                {
+                    InvertirDireccion();
+                }
+
+                // Cambiar al siguiente waypoint
+                currentWaypointIndex = (currentWaypointIndex + 1) % waypoints.Length;
+                tiempoUltimoMovimiento = Time.time; // Actualizar el tiempo del último movimiento
+            }
+        }
+        else
+        {
+            // Mover la vaca hacia el waypoint actual
+            transform.position = Vector3.MoveTowards(transform.position, waypoints[currentWaypointIndex], velocidadMovimiento * Time.deltaTime);
+        }
+    }
+
+    void InvertirDireccion()
+    {
+        // Girar la vaca antes de invertir la dirección
+        transform.Rotate(Vector3.up, anguloGiro);
+
+        // Invertir la dirección cambiando el orden de los waypoints
+        System.Array.Reverse(waypoints);
+    }
+}
