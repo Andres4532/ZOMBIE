@@ -1,0 +1,12 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[CreateAssetMenu(fileName ="Item_",menuName ="ScriptableObject/Item")]
+public class item_SO : ScriptableObject
+{
+    public string itemName;
+    [TextArea] public string description;
+    public Sprite sprite;
+
+}
