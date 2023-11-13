@@ -1,0 +1,40 @@
+using UnityEngine;
+using UnityEngine.UI;
+
+public class HungerThirst : MonoBehaviour
+{
+    public Slider hungerSlider; // Asigna el Slider desde el Inspector de Unity
+    public float hungerDecreaseSpeed = 0.5f; // Ajusta la velocidad de disminución según tus necesidades
+    public float hungerIncreaseAmountOnDestroy = 10.0f; // Ajusta la cantidad por la que debe aumentar el hambre al ser destruido
+
+    private void Update()
+    {
+        DecreaseHunger();
+    }
+
+    private void DecreaseHunger()
+    {
+        if (hungerSlider != null)
+        {
+            // Reduce gradualmente el valor del Slider hacia cero
+            hungerSlider.value = Mathf.Lerp(hungerSlider.value, 0f, Time.deltaTime * hungerDecreaseSpeed);
+        }
+        else
+        {
+            Debug.LogError("El Slider de hambre no está asignado en el Inspector.");
+        }
+    }
+
+    public void IncreaseHungerOnDestroy()
+    {
+        if (hungerSlider != null)
+        {
+            // Aumenta el valor del Slider cuando el objeto es destruido
+            hungerSlider.value += hungerIncreaseAmountOnDestroy;
+        }
+        else
+        {
+            Debug.LogError("El Slider de hambre no está asignado en el Inspector.");
+        }
+    }
+}
