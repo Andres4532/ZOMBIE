@@ -1,0 +1,33 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Generador1 : MonoBehaviour
+{
+    public GameObject objetoAGenerar; // El objeto que se generará
+    public Transform puntoGeneracion; // Punto de generación del objeto
+    public float tiempoEntreGeneraciones = 30.0f; // Tiempo entre cada generación
+    public Vector3 escalaObjeto = new Vector3(1.0f, 1.0f, 1.0f); // Escala del objeto generado
+    public float alturaGeneracion = 1.0f; // Altura del objeto generado por encima del punto de generación
+
+    void Start()
+    {
+        // Llama a la función GenerarObjeto repetidamente cada tiempoEntreGeneraciones segundos
+        InvokeRepeating("GenerarObjeto", 0.0f, tiempoEntreGeneraciones);
+    }
+
+    void GenerarObjeto()
+    {
+        Quaternion rotacion180 = Quaternion.Euler(0.0f, 180f, 0.0f);
+
+        // Calcular la posición de generación ajustada en el eje Y
+        Vector3 nuevaPosicion = puntoGeneracion.position + Vector3.up * alturaGeneracion;
+
+        // Genera un nuevo objeto en la posición ajustada con la escala deseada y rotación de 180 grados
+        GameObject nuevoObjeto = Instantiate(objetoAGenerar, nuevaPosicion, rotacion180);
+
+        // Establece la escala del objeto generado
+        nuevoObjeto.transform.localScale = escalaObjeto;
+    }
+    
+}
