@@ -1,0 +1,103 @@
+using UnityEngine;
+
+public class Enemy : MonoBehaviour
+{
+    public Transform jugador; // Referencia al transform del jugador
+    public float distanciaSigueJugador = 5.0f; // La distancia a partir de la cual el enemigo seguirá al jugador
+    public float velocidadMovimiento = 1.0f;
+    public float anguloGiro = 90.0f; // Ángulo de giro para el movimiento de la vaca
+    public bool moverseComoVaca = true; // Habilita o deshabilita el movimiento de la vaca
+
+    private bool siguiendoJugador = false;
+    private bool girando = false;
+    private float anguloTotal = 0.0f;
+    private bool deberiaGirar = false;
+
+    void Start()
+    {
+        // Llama a la función CambiarAccion cada 5 segundos
+        InvokeRepeating("CambiarAccion", 3.0f, 3.0f);
+    }
+
+    void Update()
+    {
+        // Calcula la distancia entre el enemigo y el jugador
+        float distanciaAlJugador = Vector3.Distance(transform.position, jugador.position);
+
+        if (distanciaAlJugador <= distanciaSigueJugador)
+        {
+            SeguirJugador();
+            siguiendoJugador = true;
+        }
+        else
+        {
+            if (moverseComoVaca)
+            {
+                MoverComoVaca();
+                siguiendoJugador = false;
+            }
+        }
+    }
+
+    void CambiarAccion()
+    {
+        deberiaGirar = !deberiaGirar; // Alternar entre girar y mover cada 5 segundos
+        girando = deberiaGirar;
+        anguloTotal = 0.0f;
+
+        // Invertir la dirección
+
+    }
+
+    void SeguirJugador()
+    {
+        // Calcula la dirección hacia la cual el enemigo debe moverse para alcanzar al jugador
+        Vector3 direccion = (jugador.position - transform.position).normalized;
+
+        // Mueve al enemigo en dirección al jugador
+        transform.position += direccion * velocidadMovimiento * Time.deltaTime;
+
+        // Mantener al enemigo a la misma altura vertical que el jugador
+        transform.position = new Vector3(transform.position.x, jugador.position.y, transform.position.z);
+
+        Vector3 direccionOpuesta = transform.position - jugador.position;
+        direccionOpuesta.y = 0; // Mantener la misma altura horizontal
+
+        transform.rotation = Quaternion.LookRotation(direccionOpuesta);
+    }
+
+
+
+    void MoverComoVaca()
+    {
+        if (girando)
+        {
+            GirarVaca();
+        }
+        else
+        {
+            MoverVaca();
+        }
+    }
+
+    void MoverVaca()
+    {
+        // Mover la vaca hacia atrás
+        transform.Translate(Vector3.back * velocidadMovimiento * Time.deltaTime);
+    }
+
+    void GirarVaca()
+    {
+        // Girar la vaca en el eje Y (hacia arriba) solo si el ángulo total es menor a 180 grados
+        if (anguloTotal < 90.0f)
+        {
+            float anguloGiroFrame = anguloGiro * Time.deltaTime;
+            transform.Rotate(Vector3.up, anguloGiroFrame);
+            anguloTotal += Mathf.Abs(anguloGiroFrame);
+        }
+        else
+        {
+            girando = false;
+        }
+    }
+}
