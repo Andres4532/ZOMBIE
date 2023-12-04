@@ -1,0 +1,95 @@
+using UnityEngine;
+using System.Collections;
+
+
+public class SistemaConstruccion : MonoBehaviour
+{
+    public GameObject prefabCubo; // Prefabricado del cubo que se construirá
+    public GameObject marcadorConstruccion; // Prefabricado del marcador de construcción
+    private GameObject marcadorActual; // Referencia al marcador actual
+    private GameObject[] cubosConstruidos; // Almacenar los cubos construidos
+
+    void Start()
+    {
+        cubosConstruidos = new GameObject[0]; // Inicializar la lista de cubos construidos vacía
+    }
+
+    void Update()
+    {
+        // Verificar si se presiona la tecla "C" para construir un cubo
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            ConstruirCubo();
+        }
+
+        // Actualizar la posición del marcador de construcción mientras se mantiene presionada la tecla "C"
+        if (Input.GetKey(KeyCode.C))
+        {
+            ActualizarMarcadorConstruccion();
+        }
+        else
+        {
+            // Si se suelta la tecla, destruir el marcador actual
+            if (marcadorActual != null)
+            {
+                Destroy(marcadorActual);
+            }
+        }
+
+        // Lógica para eliminar los cubos construidos después de 10 segundos
+        for (int i = 0; i < cubosConstruidos.Length; i++)
+        {
+            if (cubosConstruidos[i] != null)
+            {
+                StartCoroutine(EliminarCuboDespuesDeTiempo(cubosConstruidos[i], 10.0f));
+                cubosConstruidos[i] = null; // Marcar el cubo para ser eliminado en la próxima iteración
+            }
+        }
+    }
+
+    IEnumerator EliminarCuboDespuesDeTiempo(GameObject cubo, float tiempo)
+    {
+        yield return new WaitForSeconds(tiempo);
+        Destroy(cubo);
+    }
+
+    void ConstruirCubo()
+    {
+        // Obtener la posición actual del jugador
+        Vector3 posicionJugador = transform.position;
+
+        // Calcular la posición para colocar el nuevo cubo (por ejemplo, un poco adelante del jugador)
+        Vector3 posicionCubo = posicionJugador + transform.forward * 2.0f;
+
+        // Instanciar un nuevo cubo en la posición calculada y agregarlo a la lista de cubos construidos
+        GameObject nuevoCubo = Instantiate(prefabCubo, posicionCubo, Quaternion.identity);
+        AgregarCuboConstruido(nuevoCubo);
+
+        // Opcionalmente, podrías realizar más acciones o configuraciones aquí
+        // dependiendo de lo que necesites para tu juego
+    }
+
+    void ActualizarMarcadorConstruccion()
+    {
+        // Obtener la posición para colocar el marcador (en frente del jugador)
+        Vector3 posicionMarcador = transform.position + transform.forward * 2.0f;
+
+        // Si no hay un marcador actual, crear uno nuevo
+        if (marcadorActual == null)
+        {
+            marcadorActual = Instantiate(marcadorConstruccion, posicionMarcador, Quaternion.identity);
+        }
+        else
+        {
+            // Si hay un marcador actual, actualizar su posición
+            marcadorActual.transform.position = posicionMarcador;
+        }
+    }
+
+    void AgregarCuboConstruido(GameObject cubo)
+    {
+        // Añadir el nuevo cubo a la lista de cubos construidos
+        System.Array.Resize(ref cubosConstruidos, cubosConstruidos.Length + 1);
+        cubosConstruidos[cubosConstruidos.Length - 1] = cubo;
+    }
+}
