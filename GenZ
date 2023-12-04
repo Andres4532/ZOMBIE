@@ -1,0 +1,55 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class GenZ : MonoBehaviour
+{
+    public GameObject objectToSpawn;
+    public int numberOfObjects = 10;
+    public Vector3 spawnAreaSize = new Vector3(10f, 30f, 10f);
+    public float spawnInterval = 5.0f; // Intervalo de tiempo entre cada generación
+
+    private bool gameIsOver = false;
+
+    void Start()
+    {
+        StartCoroutine(SpawnObjectsRoutine());
+    }
+
+    IEnumerator SpawnObjectsRoutine()
+    {
+        while (!gameIsOver)
+        {
+            SpawnObjects(); // Llama al método de generación
+            yield return new WaitForSeconds(spawnInterval); // Espera el intervalo de tiempo
+        }
+    }
+
+    void SpawnObjects()
+    {
+        Vector3 randomPosition;
+        for (int i = 0; i < numberOfObjects; i++)
+        {
+            randomPosition = new Vector3(
+                Random.Range(-spawnAreaSize.x, -spawnAreaSize.x / 2), // Rango más a la izquierda
+                -1.0f, // Desplazamiento hacia abajo (-1.0f)
+                Random.Range(-spawnAreaSize.z / 2, spawnAreaSize.z / 2)
+            );
+
+            Quaternion randomRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+
+            GameObject newObject = Instantiate(objectToSpawn, randomPosition, randomRotation);
+
+            // Escalar el objeto para hacerlo más pequeño
+            float scaleFactor = Random.Range(0.05f, 0.05f); // Rango entre 0.01 y 0.1
+            newObject.transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+
+            // Agregar el componente 'Bateria' al objeto clonado
+            newObject.AddComponent<OnTriggerEnte>();
+        }
+    }
+
+
+
+
+}
