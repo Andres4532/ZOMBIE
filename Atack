@@ -1,0 +1,40 @@
+using UnityEngine;
+using UnityEngine.UI;
+
+public class EnemyAttack : MonoBehaviour
+{
+    public GameObject player; // El GameObject del jugador
+    public GameObject gameOverText; // Texto que muestra "Game Over"
+    public Button restartButton; // Botón para reiniciar
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject == player) // Verifica si el enemigo ha tocado al jugador
+        {
+            Time.timeScale = 0f; // Detiene el juego
+
+            // Muestra el texto de Game Over y el botón de reinicio
+            MostrarGameOver();
+        }
+    }
+
+    private void MostrarGameOver()
+    {
+        if (gameOverText != null && restartButton != null)
+        {
+            gameOverText.SetActive(true); // Muestra el texto de Game Over
+            restartButton.gameObject.SetActive(true); // Muestra el botón de reinicio
+        }
+        else
+        {
+            Debug.LogError("No se ha asignado el Texto o el Botón de Reinicio en el Inspector.");
+        }
+    }
+
+    // Método para reiniciar el juego (llámalo desde el botón de reinicio)
+    public void ReiniciarJuego()
+    {
+        // Puedes reiniciar el juego recargando la escena actual
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+    }
+}
