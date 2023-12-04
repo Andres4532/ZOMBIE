@@ -1,0 +1,54 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ENEMYG : MonoBehaviour
+{
+    public GameObject objectToSpawn;
+    public int numberOfObjects = 10;
+    public Vector3 spawnAreaSize = new Vector3(10f, 30f, 10f);
+    private bool gameIsOver = false;
+
+    void Start()
+    {
+        SpawnObjects();
+    }
+
+    void SpawnObjects()
+    {
+        Vector3 randomPosition;
+        for (int i = 0; i < numberOfObjects; i++)
+        {
+            randomPosition = new Vector3(
+                Random.Range(-spawnAreaSize.x / 2, spawnAreaSize.x / 2),
+                Random.Range(-spawnAreaSize.y / 2, 0f), // Cambia el rango para Y (abajo)
+                Random.Range(-spawnAreaSize.z / 2, spawnAreaSize.z / 2)
+            );
+
+            Quaternion randomRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+
+            GameObject newObject = Instantiate(objectToSpawn, randomPosition, randomRotation);
+
+            // Escalar el objeto para hacerlo más pequeño
+            float scaleFactor = Random.Range(0.05f, 0.1f);
+            newObject.transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+
+            // Agregar el componente 'Bateria' al objeto clonado
+            newObject.AddComponent<OnTriggerEnte>();
+        }
+    }
+
+
+    void Update()
+    {
+        if (gameIsOver)
+        {
+            // Agrega aquí la lógica de finalización del juego
+            // Esto podría incluir mostrar un mensaje de victoria, cargar una pantalla de fin de juego, etc.
+            // Por ejemplo, para detener el juego en una compilación:
+            Application.Quit();
+        }
+    }
+
+    
+}
