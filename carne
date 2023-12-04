@@ -1,0 +1,25 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Carne : MonoBehaviour
+{
+    public GameObject carnePrefab; // Prefab de la carne a instanciar
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player")) // Verifica si el GameObject que ha colisionado es el jugador
+        {
+            ConvertirGameObjectEnCarne(); // Convierte este GameObject en carne
+        }
+    }
+
+    private void ConvertirGameObjectEnCarne()
+    {
+        // Instancia el prefab de la carne en la misma posición y rotación que este GameObject
+        GameObject carneInstanciada = Instantiate(carnePrefab, transform.position, transform.rotation);
+
+        // Destruye este GameObject
+        Destroy(gameObject);
+    }
+}
